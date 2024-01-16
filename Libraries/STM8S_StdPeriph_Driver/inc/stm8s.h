@@ -85,6 +85,8 @@
  #define _RAISONANCE_
 #elif defined(__ICCSTM8__)
  #define _IAR_
+#elif defined(__SDCC__)
+ #define _SDCC_
 #else
  #error "Unsupported Compiler!"          /* Compiler defines not found */
 #endif
@@ -137,7 +139,13 @@
  #else /* STM8S903, STM8S103, STM8S001, STM8S003, STM8S105, STM8AF626x, STM8AF622x */
   /*!< Used with memory Models for code less than 64K */
   #define MEMCPY memcpy
- #endif /* STM8S208 or STM8S207 or STM8S007 or STM8AF62Ax or STM8AF52Ax */ 
+ #endif /* STM8S208 or STM8S207 or STM8S007 or STM8AF62Ax or STM8AF52Ax */
+#elif  defined(_SDCC_)
+ #define FAR __far
+ #define NEAR __near
+ #define TINY __tiny
+ #define EEPROM __eeprom
+ #define CONST const
 #else /*_IAR_*/
  #define FAR  __far
  #define NEAR __near
@@ -2730,6 +2738,15 @@ CFG_TypeDef;
  #define trap()                {_asm("trap\n");} /* Trap (soft IT) */
  #define wfi()                 {_asm("wfi\n");}  /* Wait For Interrupt */
  #define halt()                {_asm("halt\n");} /* Halt */
+#elif defined(_SDCC_)
+ #define enableInterrupts()  {__asm rim __endasm;}
+ #define disableInterrupts() {__asm sim __endasm;}
+ #define rim()               {__asm rim __endasm;}
+ #define sim()               {__asm sim __endasm;}
+ #define nop()               {__asm nop __endasm;}
+ #define trap()              {__asm trap __endasm;}
+ #define wfi()               {__asm wfi __endasm;}
+ #define halt()              {__asm halt __endasm;}
 #else /*_IAR_*/
  #include <intrinsics.h>
  #define enableInterrupts()    __enable_interrupt()   /* enable interrupts */
@@ -2764,6 +2781,11 @@ CFG_TypeDef;
  _Pragma( VECTOR_ID( 1 ) ) \
  __interrupt void (a) (void)  
 #endif /* _IAR_ */
+
+#ifdef _SDCC_
+#define INTERRUPT_HANDLER(a,b) void a(void) __interrupt(b)
+ #define INTERRUPT_HANDLER_TRAP(a) void a(void) trap
+#endif
 
 /*============================== Interrupt Handler declaration ========================*/
 #ifdef _COSMIC_
