@@ -2744,7 +2744,7 @@ CFG_TypeDef;
  #define rim()               {__asm rim __endasm;}
  #define sim()               {__asm sim __endasm;}
  #define nop()               {__asm nop __endasm;}
- #define trap()              {__asm trap __endasm;}
+ #define trap()              __trap()
  #define wfi()               {__asm wfi __endasm;}
  #define halt()              {__asm halt __endasm;}
 #else /*_IAR_*/
@@ -2783,14 +2783,14 @@ CFG_TypeDef;
 #endif /* _IAR_ */
 
 #ifdef _SDCC_
-#define INTERRUPT_HANDLER(a,b) void a(void) __interrupt(b)
- #define INTERRUPT_HANDLER_TRAP(a) void a(void) trap
+ #define INTERRUPT_HANDLER(a,b) void a(void) __interrupt(b)
+ #define INTERRUPT_HANDLER_TRAP(a) void a(void) __trap
 #endif
 
 /*============================== Interrupt Handler declaration ========================*/
 #ifdef _COSMIC_
  #define INTERRUPT @far @interrupt
-#elif defined(_IAR_)
+#elif defined(_IAR_) || defined(_SDCC_)
  #define INTERRUPT __interrupt
 #endif /* _COSMIC_ */
 
