@@ -237,6 +237,9 @@ typedef uint8_t  u8;
 
 
 typedef enum {FALSE = 0, TRUE = !FALSE} BOOL;
+#ifndef C_23
+   typedef enum {false = 0, true = !false} bool;
+#endif
 
 typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus, BitStatus, BitAction;
 
